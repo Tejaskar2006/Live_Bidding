@@ -9,15 +9,22 @@ const setupBidHandlers = require('./socket/bidHandler');
 const app = express();
 const server = http.createServer(app);
 
+// Support multiple origins for development and production
+const allowedOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+    : ['http://localhost:3000'];
+
 const io = new Server(server, {
     cors: {
-        origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-        methods: ['GET', 'POST']
+        origin: allowedOrigins,
+        methods: ['GET', 'POST'],
+        credentials: true
     }
 });
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000'
+    origin: allowedOrigins,
+    credentials: true
 }));
 app.use(express.json());
 
